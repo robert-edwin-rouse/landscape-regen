@@ -316,4 +316,4 @@ partial_pareto = full_pareto[full_pareto.food_rel>0.9]
 solution_set = pd.DataFrame(np.hstack((X,F)), columns=df.columns.to_list()[1:])
 solution_set['food_rel'] = solution_set['food_rel']*-1
 solution_set['birds_rel'] = solution_set['birds_rel']*-1
-solution_set.to_csv('miniLUSP_pareto.csv')
+solution_set.to_csv('Pareto.csv')
