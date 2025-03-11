@@ -9,7 +9,7 @@ Created on Mon Jun 10 13:14:41 2024
 import pandas as pd
 import numpy as np
 import torch
-import torch.nn as nn
+import surrogate as sr
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtk
 from apollo import mechanics as ma
@@ -21,18 +21,11 @@ from pymoo.operators.sampling.rnd import FloatRandomSampling
 from pymoo.termination import get_termination
 from pymoo.optimize import minimize
 from pymoo.indicators.hv import Hypervolume
-from pymoo.util.running_metric import RunningMetricAnimation
 from pymoo.decomposition.asf import ASF
-from mpl_toolkits.mplot3d import Axes3D
-from scipy.optimize import curve_fit
-from scipy.interpolate import Rbf
 
 
 ### Set plotting style parameters
 ma.textstyle()
-
-
-### Set global model parameters
 torch.manual_seed(42)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -46,30 +39,9 @@ xspace = ma.featurelocator(df, features)
 yspace = ma.featurelocator(df, targets)
 
 
-### Define imported Neural Network structure
-class ScapeNET(nn.Module):
-    def __init__(self, in_dim, out_dim):
-        super(ScapeNET, self).__init__()
-        self.in_dim = in_dim
-        self.out_dim = out_dim
-        self.linear_layers = nn.Sequential(
-            nn.Linear(in_dim, 256),
-            nn.SiLU(),
-            nn.Linear(256, 64),
-            nn.SiLU(),
-            nn.Linear(64, 16),
-            nn.SiLU(),
-            nn.Linear(16, out_dim),
-            )
-    
-    def forward(self, z):
-        z = self.linear_layers(z)
-        return z
-
-
 ### Network Loading
 net = torch.load('model.pt')
-net.eval()
+net = sr.LandNET(len(xspace), len(yspace))
 
 
 class Landscape_Opt(ElementwiseProblem):
@@ -91,22 +63,16 @@ class Landscape_Opt(ElementwiseProblem):
         cx01 = x[0] + x[1] - 1
         cx02 = x[2]*0.02781 + x[0] - 1
         cx03 = x[2]*0.02701 + x[1] - 1
-        
         cx04 = x[4]*0.3799 + x[0] - 1
         cx05 = x[4]*0.3690 + x[1] - 1
         cx06 = x[4]*0.4815 + x[6] - 1
-        
         cx07 = x[5]*0.3667 + x[0] - 1
         cx08 = x[5]*0.3561 + x[1] - 1
         cx09 = x[5]*0.4648 + x[6] - 1
         cx10 = x[5]*0.7934 + x[7] - 1
-        
         cx11 = x[0]*1.3393 + x[6] - 1.3393
         cx12 = x[1]*1.3791 + x[6] - 1.3791
         cx13 = x[7]*0.5858 + x[6] - 1.0818
-        # cx13 = x[7]*0.7218 + x[6] - 1.09856
-
-
         cx14 = x[0]*1.2298 + x[7] - 1.3617
         cx15 = x[1]*1.2065 + x[7] - 1.3384
         
@@ -180,29 +146,6 @@ plt.xlabel("Function Evaluations")
 plt.ylabel("Hypervolume")
 plt.show()
 
-# running = RunningMetricAnimation(delta_gen=100,
-#                         n_plots=4,
-#                         key_press=False,
-#                         do_show=True)
-
-# for algorithm in res.history:
-#     running.update(algorithm)
-
-# Create 3D plot of the data points and the fitted curve 
-
-
-# def surf_func(xy, a, b, c, d, e, f): 
-#     x, y = xy 
-#     return a + b*x + c*y + d*x**2 + e*y**2 + f*x*y
-
-# popt, pcov = curve_fit(surf_func, (F[:,1], F[:,2]), F[:,0])
-# Z_pred = surf_func((F[:,1], F[:,2]), *popt) 
-
-# fig = plt.figure() 
-# ax = fig.add_subplot(projection="3d") 
-# ax.scatter(F[:,1], F[:,2], F[:,0])
-# ax.plot_trisurf(F[:,1], F[:,2], Z_pred) 
-# plt.show()
 
 
 y0 = F[:,0]
@@ -239,6 +182,9 @@ def pareto_overlay(x, y, xlimits, ylimits, xlabel, ylabel, c, c_l, l_x, l_y):
 y_str0 = 'CO'+r'$_2$'+'eq Emissions Relative to 2015'
 y_str1 = 'Agriculatural Yield Relative to 2015'
 y_str2 = 'Geometric Change in Bird Populations'
+
+
+
 pareto_2D_slice(y0, y1, [-1.05, 1], [0.2, 1], y_str0, y_str1, y2, y_str2)
 pareto_2D_slice(y0, y2, [-1.05, 1], [0.95, 1.2], y_str0, y_str2, y1,y_str1)
 pareto_2D_slice(y1, y2, [0.2, 1], [0.95, 1.2],  y_str1, y_str2, y0, y_str0)
