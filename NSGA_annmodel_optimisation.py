@@ -41,12 +41,10 @@ yspace = ma.featurelocator(df, targets)
 
 ### Network Loading
 net = torch.load('model.pt')
-net = sr.LandNET(len(xspace), len(yspace))
 
-
-class Landscape_Opt(ElementwiseProblem):
-
-    def __init__(self):
+class LandscapeOptimisation(ElementwiseProblem):
+    def __init__(self, model):
+        self.model = model
         super().__init__(n_var=8,
                          n_obj=3,
                          n_ieq_constr=17,
@@ -55,45 +53,42 @@ class Landscape_Opt(ElementwiseProblem):
 
     def _evaluate(self, x, out, *args, **kwargs):
         z = torch.from_numpy(x)
-        z = net(z.float()).data.numpy()
-        co2 = z[0]
-        agr = -z[1]
-        bio = -z[2]
-        
-        cx01 = x[0] + x[1] - 1
-        cx02 = x[2]*0.02781 + x[0] - 1
-        cx03 = x[2]*0.02701 + x[1] - 1
-        cx04 = x[4]*0.3799 + x[0] - 1
-        cx05 = x[4]*0.3690 + x[1] - 1
-        cx06 = x[4]*0.4815 + x[6] - 1
-        cx07 = x[5]*0.3667 + x[0] - 1
-        cx08 = x[5]*0.3561 + x[1] - 1
-        cx09 = x[5]*0.4648 + x[6] - 1
-        cx10 = x[5]*0.7934 + x[7] - 1
-        cx11 = x[0]*1.3393 + x[6] - 1.3393
-        cx12 = x[1]*1.3791 + x[6] - 1.3791
-        cx13 = x[7]*0.5858 + x[6] - 1.0818
-        cx14 = x[0]*1.2298 + x[7] - 1.3617
-        cx15 = x[1]*1.2065 + x[7] - 1.3384
-        
-        cy1 = 0 + agr
-        cy2 = -1 - co2
-        
-        out["F"] = [co2, agr, bio]
-        out["G"] = [cx01, cx02, cx03, cx04, cx05, cx06, cx07, cx08, cx09,
-                    cx10, cx11, cx12, cx13, cx14, cx15, cy1, cy2]
+        z = self.model(z.float()).data.numpy()
+        out["F"] = [z[0], -z[1], -z[2]]
+        out["G"] = self._calculate_constraints(x, z)
+    
+    def _calculate_constraints(self, x, z):
+        constraints = [x[0] + x[1] - 1,
+                    x[2]*0.02781 + x[0] - 1,
+                    x[2]*0.02701 + x[1] - 1,
+                    x[4]*0.3799 + x[0] - 1,
+                    x[4]*0.3690 + x[1] - 1,
+                    x[4]*0.4815 + x[6] - 1,
+                    x[5]*0.3667 + x[0] - 1,
+                    x[5]*0.3561 + x[1] - 1,
+                    x[5]*0.4648 + x[6] - 1,
+                    x[5]*0.7934 + x[7] - 1,
+                    x[0]*1.3393 + x[6] - 1.3393,
+                    x[1]*1.3791 + x[6] - 1.3791,
+                    x[7]*0.5858 + x[6] - 1.0818,
+                    x[0]*1.2298 + x[7] - 1.3617,
+                    x[1]*1.2065 + x[7] - 1.3384,
+                    0 - z[1],
+                    -1 - z[0],]
+        return constraints
 
-problem = Landscape_Opt()
+
+problem = LandscapeOptimisation(net)
 
 algorithm = NSGA2(
-    pop_size=5000,
+    pop_size=500,
     n_offsprings=20,
     sampling=FloatRandomSampling(),
     crossover=SBX(prob=0.8, eta=16),
     mutation=PM(eta=10),
     eliminate_duplicates=True
 )
-termination = get_termination("n_gen", 8000)
+termination = get_termination("n_gen", 2000)
 
 res = minimize(problem,
                algorithm,
@@ -242,19 +237,9 @@ decomp = ASF()
 i = decomp.do(nF, 1/weights).argmin()
 
 full = np.hstack((X, F))
-col_list = df.columns.to_list()
-full_pareto = pd.DataFrame({col_list[1]: full[:, 0],
-                            col_list[2]: full[:, 1],
-                            col_list[3]: full[:, 2],
-                            col_list[4]: full[:, 3],
-                            col_list[5]: full[:, 4],
-                            col_list[6]: full[:, 5],
-                            col_list[7]: full[:, 6],
-                            col_list[8]: full[:, 7],
-                            col_list[9]: full[:, 8],
-                            col_list[10]: full[:, 9],
-                            col_list[11]: full[:, 10],
-                            })
+col_list = df.columns.to_list()[1:]
+full_pareto = pd.DataFrame(full, columns=col_list)
+
 full_pareto['food_rel'] = full_pareto['food_rel']*-1
 full_pareto['birds_rel'] = full_pareto['birds_rel']*-1
 partial_pareto = full_pareto[full_pareto.food_rel>0.9]
