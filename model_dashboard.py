@@ -55,7 +55,7 @@ class ScapeNET(nn.Module):
 
 
 ### Network Loading
-net = torch.load('model.pt')
+net = torch.load('model.pt', weights_only=False)
 net.eval()
 
 
