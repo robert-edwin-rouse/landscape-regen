@@ -19,7 +19,7 @@ def main(overwrite=False):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     ### Data import, feature-target identification, and datasplit
-    df = pd.read_csv('miniLUSP_output.csv').dropna()
+    df = pd.read_csv('data/miniLUSP_output.csv').dropna()
     columns = df.columns.tolist()
     features = columns[1:9]
     targets = columns[9:]

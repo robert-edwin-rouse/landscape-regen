@@ -24,15 +24,6 @@ torch.manual_seed(42)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
-### Data import, feature-target identification, and datasplit
-df  = pd.read_csv('miniLUSP_new.csv')
-columns = df.columns.tolist()
-features = columns[1:9]
-targets = columns[9:]
-xspace = ma.featurelocator(df, features)
-yspace = ma.featurelocator(df, targets)
-
-
 ### Define imported Neural Network structure
 class ScapeNET(nn.Module):
     def __init__(self, in_dim, out_dim):

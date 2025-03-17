@@ -15,7 +15,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/robert-edwin-rouse/landscape-regen">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="assets/Cambridge Festival Banner.png" alt="Logo" width="70" height="20">
   </a>
 
 <h3 align="center">project_title</h3>
