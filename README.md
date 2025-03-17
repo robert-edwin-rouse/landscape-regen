@@ -188,4 +188,4 @@ Project Link: [https://github.com/robert-edwin-rouse/landscape-regen](https://gi
 [issues-url]: https://github.com/robert-edwin-rouse/landscape-regen/issues
 [license-shield]: https://img.shields.io/github/license/robert-edwin-rouse/landscape-regen.svg?style=for-the-badge
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
-[product-screenshot]: assets/Cambridge Festival Banner.png
+[product-screenshot]: assets/Banner.png
