@@ -15,7 +15,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/robert-edwin-rouse/landscape-regen">
-    <img src="assets/Cambridge Festival Banner.png" alt="Logo" width="70" height="20">
+    <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">project_title</h3>
@@ -188,4 +188,4 @@ Project Link: [https://github.com/robert-edwin-rouse/landscape-regen](https://gi
 [issues-url]: https://github.com/robert-edwin-rouse/landscape-regen/issues
 [license-shield]: https://img.shields.io/github/license/robert-edwin-rouse/landscape-regen.svg?style=for-the-badge
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
-[product-screenshot]: figures/Normal.png
+[product-screenshot]: assets/Cambridge Festival Banner.png
