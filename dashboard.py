@@ -58,12 +58,12 @@ app.layout = html.Div(
                       tooltip={'placement': 'bottom', 'always_visible': True},
                       updatemode='drag', id='peatland_up'),
         
-        html.Label('Silvoa Increase', className='slider_label'),
+        html.Label('Silvoarable Increase', className='slider_label'),
         dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                       tooltip={'placement': 'bottom', 'always_visible': True},
                       updatemode='drag', id='silvoa'),
         
-        html.Label('Silvop Increase', className='slider_label'),
+        html.Label('Silvopastoral Increase', className='slider_label'),
         dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                       tooltip={'placement': 'bottom', 'always_visible': True},
                       updatemode='drag', id='silvop'),
@@ -113,14 +113,32 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
             bird species populations : {}'.format(z[2])
     lst = [nl, lst1, nl, nl, lst2, nl, nl, lst3]
     fig = make_subplots(rows=1, cols=3, shared_yaxes=False)
-    fig.add_trace(px.Bar(x=['Change in net CO2e emissions'],
-                         y=[z[0]],
+    fig.add_trace(px.Bar(x=['Change in net CO2e emissions'], y=[z[0]],
+                         marker=dict(
+                             color=[z[0]],
+                             colorscale=[[0, '#7DB567'],   
+                                         [0.5, '#CCA857'], 
+                                         [1.0, '#8B424B']],
+                             cmin=-1.0,
+                             cmax=1.0)
                          ), row=1, col=1)
     fig.add_trace(px.Bar(x=['Change in total farmland calorific production'],
-                         y=[z[1]],
+                         y=[z[1]], marker=dict(
+                             color=[z[1]],
+                             colorscale=[[0, '#8B424B'],   
+                                         [0.5, '#CCA857'], 
+                                         [1.0, '#7DB567']],
+                             cmin=0.0,
+                             cmax=1.0),
                          ), row=1, col=2)
     fig.add_trace(px.Bar(x=['Geometric bird species population change'],
-                         y=[z[2]],
+                         y=[z[2]], marker=dict(
+                             color=[z[2]],
+                             colorscale=[[0.0, '#8B424B'],   
+                                         [0.5, '#CCA857'], 
+                                         [1.0, '#7DB567']],
+                             cmin=0.95,
+                             cmax=1.1),
                          ), row=1, col=3)
     fig.update_layout(yaxis1 = dict(range=[-4, 1.5]))
     fig.update_layout(yaxis2 = dict(range=[-3, 1.5]))
