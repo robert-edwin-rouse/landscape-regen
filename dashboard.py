@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from torch.autograd import Variable
 from apollo import mechanics as ma
 from dash import Dash, dcc, html, Input, Output, callback
+import dash_bootstrap_components as dbc
 from plotly.subplots import make_subplots
 import plotly.graph_objects as px
 
@@ -35,44 +36,44 @@ slider_scale = {0:'0.0', 0.1:'0.1', 0.2:'0.2', 0.3:'0.3', 0.4:'0.4', 0.5:'0.5',
 
 app = Dash(__name__)
 app.layout = html.Div(
-    [   html.Img(id='banner', src='assets/Banner.png', style={'width': '100%'}),
+    [   html.Img(className='banner', src='assets/Banner.png'),
 
-        html.Label('Grassland Increase'),
+        html.Label('Grassland Increase', className='slider_label'),
         dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                       tooltip={'placement': 'bottom', 'always_visible': True},
                       updatemode='drag', id='grassland'),
         
-        html.Label('Organic Increase'),
+        html.Label('Organic Increase', className='slider_label'),
         dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                       tooltip={'placement': 'bottom', 'always_visible': True},
                       updatemode='drag', id='organic'),
         
-        html.Label('Peatland Low Increase'),
+        html.Label('Peatland Low Increase', className='slider_label'),
         dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                       tooltip={'placement': 'bottom', 'always_visible': True},
                       updatemode='drag', id='peatland_lo'),
         
-        html.Label('Peatland Up Increase'),
+        html.Label('Peatland Up Increase', className='slider_label'),
         dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                       tooltip={'placement': 'bottom', 'always_visible': True},
                       updatemode='drag', id='peatland_up'),
         
-        html.Label('Silvoa Increase'),
+        html.Label('Silvoa Increase', className='slider_label'),
         dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                       tooltip={'placement': 'bottom', 'always_visible': True},
                       updatemode='drag', id='silvoa'),
         
-        html.Label('Silvop Increase'),
+        html.Label('Silvop Increase', className='slider_label'),
         dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                       tooltip={'placement': 'bottom', 'always_visible': True},
                       updatemode='drag', id='silvop'),
         
-        html.Label('Woodland Increase'),
+        html.Label('Woodland Increase', className='slider_label'),
         dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                       tooltip={'placement': 'bottom', 'always_visible': True},
                       updatemode='drag', id='woodland'),
         
-        html.Label('Wood Pasture Increase'),
+        html.Label('Wood Pasture Increase', className='slider_label'),
         dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                       tooltip={'placement': 'bottom', 'always_visible': True},
                       updatemode='drag', id='woodpa'),
@@ -82,7 +83,7 @@ app.layout = html.Div(
         html.H3(id='output_values', style={'marginTop': 20}),
         
         
-    ], style={"margin": 120})
+    ], style={"margin": 20})
 
 
 # @app.callback(Output('my-graph', 'figure'),

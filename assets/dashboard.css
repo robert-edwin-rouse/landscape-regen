@@ -1,0 +1,27 @@
+@font-face {
+    font-family: 'GlacialRegular';
+    src: url('fonts/GlacialIndifference-Regular.otf');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'GlacialBold';
+    src: url('fonts/GlacialIndifference-Bold.otf');
+    font-weight: bold;
+}
+
+.banner {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+  padding-bottom: 40;
+}
+
+.slider_label{
+    font-family: 'GlacialBold';
+    font-size: 20px;
+    color: #000000;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
