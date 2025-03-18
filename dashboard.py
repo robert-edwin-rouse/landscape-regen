@@ -6,8 +6,9 @@ Created on Tue Apr 21 16:38:52 2024
 
 import pandas as pd
 import numpy as np
+import dash
 import torch
-import torch.nn as nn
+import surrogate as sr
 import matplotlib.pyplot as plt
 from torch.autograd import Variable
 from apollo import mechanics as ma
@@ -15,34 +16,13 @@ from dash import Dash, dcc, html, Input, Output, callback
 from plotly.subplots import make_subplots
 import plotly.graph_objects as px
 
+
 ### Set plotting style parameters
 ma.textstyle()
 
 
 ### Set global model parameters
-torch.manual_seed(42)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-
-### Define imported Neural Network structure
-class ScapeNET(nn.Module):
-    def __init__(self, in_dim, out_dim):
-        super(ScapeNET, self).__init__()
-        self.in_dim = in_dim
-        self.out_dim = out_dim
-        self.linear_layers = nn.Sequential(
-            nn.Linear(in_dim, 256),
-            nn.SiLU(),
-            nn.Linear(256, 64),
-            nn.SiLU(),
-            nn.Linear(64, 16),
-            nn.SiLU(),
-            nn.Linear(16, out_dim),
-            )
-    
-    def forward(self, z):
-        z = self.linear_layers(z)
-        return z
 
 
 ### Network Loading
@@ -55,8 +35,7 @@ slider_scale = {0:'0.0', 0.1:'0.1', 0.2:'0.2', 0.3:'0.3', 0.4:'0.4', 0.5:'0.5',
 
 app = Dash(__name__)
 app.layout = html.Div(
-    [
-        html.H1('Modelled Land Use Change Impact', style={'textAlign': 'center'}),
+    [   html.Img(id='banner', src='assets/Banner.png', style={'width': '100%'}),
 
         html.Label('Grassland Increase'),
         dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
