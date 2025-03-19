@@ -133,11 +133,11 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
     fig1 = vi.single_dumbell('Change in net CO2e emissions',
                              base[0], z[0], [0, 0.5, 1.0], [-1, 1])
     fig1.update_yaxes(range=[-1.25, 1.25])
-    fig2 = vi.single_dumbell('Change in net CO2e emissions',
+    fig2 = vi.single_dumbell('Change in total farmland calorific production',
                              base[1], z[1], [0, 0.5, 1.0], [-1, 1])
     fig2.update_yaxes(range=[-1.25, 1.25])
 
-    fig3 = vi.single_dumbell('Change in net CO2e emissions',
+    fig3 = vi.single_dumbell('Geometric bird species population change',
                              base[2], z[2], [0, 0.5, 1.0], [0.9, 1.2])
     fig3.update_yaxes(range=[0.9, 1.2])
     return [fig1, fig2, fig3]
