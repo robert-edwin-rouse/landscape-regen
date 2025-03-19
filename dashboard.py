@@ -28,7 +28,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 ### Network Loading
-net = torch.load('model.pt')
+net = torch.load('model.pt', weights_only=False)
 net.eval()
 
 
@@ -156,7 +156,19 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
 
     return [fig1, fig2, fig3]
     
-
+# Grassland and organic constraint
+@app.callback(
+    [Output('grassland', 'value'), Output('organic', 'value')],
+    [Input('grassland', 'value'), Input('organic', 'value')]
+)
+def clamp_sum(g_val, o_val):
+    total = g_val + o_val
+    if total <= 1:
+      # No change needed
+      return g_val, o_val
+    else:
+      # Scale both values proportionally so their sum is 1
+      return g_val / total, o_val / total
 
 # def display_value(grassland, organic, peatland_lo, peatland_up,
 #                   silvoa, silvop, woodland, woodpa):
@@ -211,4 +223,9 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
 #     return fig
 
 if __name__ == "__main__":
-    app.run_server(debug=True, host='127.0.0.1', port='8051')
+    # for backwards compatibility, use the `run_server` method if its defined otherwise
+    # use `run`
+    if "run_server" in app.__dir__():
+      app.run_server(debug=True,  host='127.0.0.1', port='8051')
+    else:
+      app.run(debug=True, host='127.0.0.1', port='8051')

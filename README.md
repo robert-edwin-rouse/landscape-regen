@@ -69,51 +69,44 @@ Text.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
-### Built With
-
-The following libraries/tools/etc. are required for this project.
-
-* python3
-  * pandas
-  * numpy
-  * scipy
-  * matplotlib
-* cdsapi
-* xarray
-* pytorch
-* scikit-learn
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- GETTING STARTED -->
-## Getting Started
-
-Placeholder.
-
 ### Prerequisites
 
-Placeholder.
+The project requires Python 3.8+, and various libraries described in the
+[requirements.txt](https://github.com/robert-edwin-rouse/landscape-regen/blob/main/requirements.txt)
+file.
 
-### Installation
+### Installation and Running
 
-1. Instruction [https://example.com](https://example.com)
-2. Instruction
+1. Clone the repository:
    ```sh
    git clone https://github.com/robert-edwin-rouse/landscape-regen.git
+   cd landscape-regen
    ```
-3. Instruction
-   ```sh
-   pip install cdsapi
-   ```
-4. Instruction
-   ```py
-   def func:
-    return pass
-   ```
+
+3. Update the submodules:
+```sh
+git submodule update --init --recursive
+```
+
+4. Install the dependencies. We recommend doing this from within a virtual environment, e.g.
+```sh
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+(If you do not wish to use a virtual environment then just the last step can be used to install the dependencies globally).
+
+5. Launch the dashboard:
+```sh
+python3 dashboard.py
+```
+This will notify you of the web address and port it is running on, e.g,
+
+```
+Dash is running on http://127.0.0.1:8051/
+```
+ 
+which you can now visit in your browser.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

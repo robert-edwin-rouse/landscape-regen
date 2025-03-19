@@ -1,0 +1,11 @@
+pandas
+numpy
+scipy
+matplotlib
+cdsapi
+xarray
+torch
+scikit-learn
+cdsapi
+dash
+dash-bootstrap-components
