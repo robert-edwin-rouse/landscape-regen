@@ -18,6 +18,8 @@ import dash_bootstrap_components as dbc
 from plotly.subplots import make_subplots
 import plotly.graph_objects as px
 
+# Constraints for the model are defined here
+from constraints import constraints, Constraint
 
 ### Set plotting style parameters
 ma.textstyle()
@@ -44,44 +46,44 @@ app.layout = html.Div(
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='grassland'),
-            
+
             html.Label('Organic Increase', className='slider_label'),
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='organic'),
-            
+
             html.Label('Peatland (Lower) Increase', className='slider_label'),
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='peatland_lo'),
-            
+
             html.Label('Peatland (Upper) Increase', className='slider_label'),
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='peatland_up'),
-            
+
             html.Label('Silvoarable Increase', className='slider_label'),
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='silvoa'),
-            
+
             html.Label('Silvopastoral Increase', className='slider_label'),
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='silvop'),
-            
+
             html.Label('Woodland Increase', className='slider_label'),
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='woodland'),
-            
+
             html.Label('Wood Pasture Increase', className='slider_label'),
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='woodpa'),]),
             width={'size':6}),
-         
-         
+
+
          dbc.Col([html.Div(dcc.Graph(id='fig1',
                                      style={'height':'80vh'}))],
                  width={'size':2}),
@@ -131,7 +133,7 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
                       title_font=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'),
                       tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
     fig1.update_layout(plot_bgcolor='white')
-    
+
     fig2 = vi.single_dumbell('Farmland productivity % change',
                              base[1], z[1], [-1, 1],
                              ['#8B424B','#CCA857','#7DB567'])
@@ -155,20 +157,28 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
     fig3.update_layout(plot_bgcolor='white')
 
     return [fig1, fig2, fig3]
-    
-# Grassland and organic constraint
+
+# Enforce invariants on the sliders
 @app.callback(
-    [Output('grassland', 'value'), Output('organic', 'value')],
-    [Input('grassland', 'value'), Input('organic', 'value')]
-)
-def clamp_sum(g_val, o_val):
-    total = g_val + o_val
-    if total <= 1:
-      # No change needed
-      return g_val, o_val
-    else:
-      # Scale both values proportionally so their sum is 1
-      return g_val / total, o_val / total
+   # All the sliders
+    [Output('grassland', 'value'), Output('organic', 'value'), Output('peatland_lo', 'value')
+   , Output('silvoa', 'value'), Output('silvop', 'value'), Output('woodland', 'value')
+   , Output('woodpa', 'value')],
+    # All the sliders
+    [Input('grassland', 'value'), Input('organic', 'value'), Input('peatland_lo', 'value')
+    , Input('silvoa', 'value'), Input('silvop', 'value'),  Input('woodland', 'value')
+    , Input('woodpa', 'value')])
+def enforce_slider_constraints(g_val, o_val, p_lo, s_a, s_p, w_l, w_p):
+    # Put the values into a model dictionary
+    model = {"G": g_val, "O": o_val, "P_lo" : p_lo, "S_A": s_a
+             , "S_P": s_p, "WL": w_l, "WP": w_p}
+    # Apply balancing of the constraints when constraints are not satisfied
+    for constraint in constraints:
+        if isinstance(constraint, Constraint) and not constraint.isSatisfied(model):
+            model = constraint.balance(model)
+
+    # Return the balanced values back to the UI
+    return (model["G"], model["O"], model["P_lo"], model["S_A"], model["S_P"], model["WL"], model["WP"])
 
 # def display_value(grassland, organic, peatland_lo, peatland_up,
 #                   silvoa, silvop, woodland, woodpa):
@@ -183,13 +193,13 @@ def clamp_sum(g_val, o_val):
 #     lst3 = 'Relative geometric change across 120 terrestrial \
 #             bird species populations : {}'.format(z[2])
 #     lst = [nl, lst1, nl, nl, lst2, nl, nl, lst3]
-    
+
 #     fig = make_subplots(rows=1, cols=3, shared_yaxes=False)
 #     fig.add_trace(px.Bar(x=['Change in net CO2e emissions'], y=[z[0]],
 #                          marker=dict(
 #                              color=[z[0]],
-#                              colorscale=[[0, '#7DB567'],   
-#                                          [0.5, '#CCA857'], 
+#                              colorscale=[[0, '#7DB567'],
+#                                          [0.5, '#CCA857'],
 #                                          [1.0, '#8B424B']],
 #                              cmin=-1.0,
 #                              cmax=1.0)
@@ -197,20 +207,20 @@ def clamp_sum(g_val, o_val):
 #     fig.add_trace(px.Bar(x=['Change in total farmland calorific production'],
 #                          y=[z[1]], marker=dict(
 #                              color=[z[1]],
-#                              colorscale=[[0, '#8B424B'],   
-#                                          [0.5, '#CCA857'], 
+#                              colorscale=[[0, '#8B424B'],
+#                                          [0.5, '#CCA857'],
 #                                          [1.0, '#7DB567']],
 #                              cmin=0.0,
 #                              cmax=1.0),
 #                          ), row=1, col=2)
-    
-    
-    
+
+
+
 #     fig.add_trace(px.Bar(x=['Geometric bird species population change'],
 #                          y=[z[2]], marker=dict(
 #                              color=[z[2]],
-#                              colorscale=[[0.0, '#8B424B'],   
-#                                          [0.5, '#CCA857'], 
+#                              colorscale=[[0.0, '#8B424B'],
+#                                          [0.5, '#CCA857'],
 #                                          [1.0, '#7DB567']],
 #                              cmin=0.95,
 #                              cmax=1.1),
