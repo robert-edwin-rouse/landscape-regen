@@ -18,6 +18,7 @@ import dash_bootstrap_components as dbc
 from plotly.subplots import make_subplots
 import plotly.graph_objects as px
 
+# Constraints for the model are defined here
 from constraints import constraints
 
 ### Set plotting style parameters

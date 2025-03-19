@@ -30,5 +30,5 @@ constraints = [
   , Expr("G") + Expr("O") <= 1
   ]
 
-# Generate specification document
+# Generate LaTeX specification document
 generateLatexSpecification(constraints)

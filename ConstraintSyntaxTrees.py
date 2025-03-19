@@ -4,20 +4,15 @@ This module defines a simple constraint syntax tree that can be used to
 represent constraints in a linear program. The syntax tree is made up of
 two classes: Expr and Constraint. An Expr object represents an expression
 in the constraint, while a Constraint object represents a constraint in
-the linear program. The Expr class has methods for evaluating the expression
-using a model, and for returning a list of variables in the expression. The
-Constraint class has methods for checking if the constraint is satisfied by
-a model, and for balancing the constraint using a model. The Expr class
-overloads the +, *, and <= operators to allow for easy construction of
-expressions and constraints.
+the linear program.
 
-The right hand side of the constraint is always a float, while the left hand
-side is an expression. The expression can be a constant, a variable, or an
-operation on other expressions. The expression can be evaluated using a model
-to get a float value, and the variables in the expression can be returned as
-a list of strings. The constraint can be checked for satisfaction using a
-model, and the constraint can be balanced using a model to get a new model
-that satisfies the constraint.
+The expression can be a constant, a variable, or an operation on other expressions.
+The Expr class has methods for evaluating the expression using a model, and it overloads
+the +, *, and <= operators to allow for easy construction of expressions and constraints.
+
+The Constraint class has methods for checking if the constraint is satisfied by
+a model, and for balancing a model using the constraint, to get a new model
+satisfying the constraint.
 """
 from typing import Dict, Callable
 
