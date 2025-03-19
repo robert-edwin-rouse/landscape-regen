@@ -19,7 +19,7 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as px
 
 # Constraints for the model are defined here
-from constraints import constraints
+from constraints import constraints, Constraint
 
 ### Set plotting style parameters
 ma.textstyle()
@@ -174,7 +174,7 @@ def clamp_sum(g_val, o_val, p_lo, s_a, s_p, w_l, w_p):
              , "S_P": s_p, "WL": w_l, "WP": w_p}
     # Apply balancing of the constraints when constraints are not satisfied
     for constraint in constraints:
-        if not constraint.isSatisfied(model):
+        if isinstance(constraint, Constraint) and not constraint.isSatisfied(model):
             model = constraint.balance(model)
 
     # Return the balanced values back to the UI
