@@ -168,7 +168,7 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
     [Input('grassland', 'value'), Input('organic', 'value'), Input('peatland_lo', 'value')
     , Input('silvoa', 'value'), Input('silvop', 'value'),  Input('woodland', 'value')
     , Input('woodpa', 'value')])
-def clamp_sum(g_val, o_val, p_lo, s_a, s_p, w_l, w_p):
+def enforce_slider_constraints(g_val, o_val, p_lo, s_a, s_p, w_l, w_p):
     # Put the values into a model dictionary
     model = {"G": g_val, "O": o_val, "P_lo" : p_lo, "S_A": s_a
              , "S_P": s_p, "WL": w_l, "WP": w_p}
