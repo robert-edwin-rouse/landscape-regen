@@ -34,60 +34,70 @@ net.eval()
 slider_scale = {0:'0.0', 0.1:'0.1', 0.2:'0.2', 0.3:'0.3', 0.4:'0.4', 0.5:'0.5',
                 0.6:'0.6', 0.7:'0.7', 0.8:'0.8', 0.9:'0.9', 1.0:'1.0'}
 
-app = Dash(__name__)
+app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.layout = html.Div(
-    [   html.Img(className='banner', src='assets/Banner.png'),
+    [html.Img(className='banner', src='assets/Banner.png'),
+     dbc.Row(
+         [dbc.Col(html.Div([
+            html.Label('Grassland Increase', className='slider_label'),
+            dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
+                          tooltip={'placement': 'bottom', 'always_visible': True},
+                          updatemode='drag', id='grassland'),
+            
+            html.Label('Organic Increase', className='slider_label'),
+            dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
+                          tooltip={'placement': 'bottom', 'always_visible': True},
+                          updatemode='drag', id='organic'),
+            
+            html.Label('Peatland Low Increase', className='slider_label'),
+            dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
+                          tooltip={'placement': 'bottom', 'always_visible': True},
+                          updatemode='drag', id='peatland_lo'),
+            
+            html.Label('Peatland Up Increase', className='slider_label'),
+            dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
+                          tooltip={'placement': 'bottom', 'always_visible': True},
+                          updatemode='drag', id='peatland_up'),
+            
+            html.Label('Silvoarable Increase', className='slider_label'),
+            dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
+                          tooltip={'placement': 'bottom', 'always_visible': True},
+                          updatemode='drag', id='silvoa'),
+            
+            html.Label('Silvopastoral Increase', className='slider_label'),
+            dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
+                          tooltip={'placement': 'bottom', 'always_visible': True},
+                          updatemode='drag', id='silvop'),
+            
+            html.Label('Woodland Increase', className='slider_label'),
+            dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
+                          tooltip={'placement': 'bottom', 'always_visible': True},
+                          updatemode='drag', id='woodland'),
+            
+            html.Label('Wood Pasture Increase', className='slider_label'),
+            dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
+                          tooltip={'placement': 'bottom', 'always_visible': True},
+                          updatemode='drag', id='woodpa'),]),
+            width={'size':6}),
+         
+         
+         dbc.Col([html.Div(dcc.Graph(id='output_graph'))], width={'size':6})
+         ])
+     
 
-        html.Label('Grassland Increase', className='slider_label'),
-        dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
-                      tooltip={'placement': 'bottom', 'always_visible': True},
-                      updatemode='drag', id='grassland'),
         
-        html.Label('Organic Increase', className='slider_label'),
-        dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
-                      tooltip={'placement': 'bottom', 'always_visible': True},
-                      updatemode='drag', id='organic'),
         
-        html.Label('Peatland Low Increase', className='slider_label'),
-        dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
-                      tooltip={'placement': 'bottom', 'always_visible': True},
-                      updatemode='drag', id='peatland_lo'),
         
-        html.Label('Peatland Up Increase', className='slider_label'),
-        dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
-                      tooltip={'placement': 'bottom', 'always_visible': True},
-                      updatemode='drag', id='peatland_up'),
-        
-        html.Label('Silvoarable Increase', className='slider_label'),
-        dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
-                      tooltip={'placement': 'bottom', 'always_visible': True},
-                      updatemode='drag', id='silvoa'),
-        
-        html.Label('Silvopastoral Increase', className='slider_label'),
-        dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
-                      tooltip={'placement': 'bottom', 'always_visible': True},
-                      updatemode='drag', id='silvop'),
-        
-        html.Label('Woodland Increase', className='slider_label'),
-        dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
-                      tooltip={'placement': 'bottom', 'always_visible': True},
-                      updatemode='drag', id='woodland'),
-        
-        html.Label('Wood Pasture Increase', className='slider_label'),
-        dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
-                      tooltip={'placement': 'bottom', 'always_visible': True},
-                      updatemode='drag', id='woodpa'),
-        
-        dcc.Graph(id='output_graph'),
 
-        html.H3(id='output_values', style={'marginTop': 20}),
+        # html.H3(id='output_values', style={'marginTop': 20}),
         
         
     ], style={"margin": 20})
 
 
 # @app.callback(Output('my-graph', 'figure'),
-@app.callback(Output('output_values', 'children'),
+@app.callback(
+                # Output('output_values', 'children'),
               Output('output_graph','figure'),
               Input('grassland', 'value'),
               Input('organic', 'value'),
@@ -144,7 +154,8 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
     fig.update_layout(yaxis2 = dict(range=[-3, 1.5]))
     fig.update_layout(yaxis3 = dict(range=[0.9, 1.2]))
 
-    return lst, fig
+    # return lst, fig
+    return fig
 
 if __name__ == "__main__":
     app.run_server(debug=True, host='127.0.0.1', port='8051')
