@@ -7,7 +7,7 @@ Created on Wed Mar 19 13:47:59 2025
 import plotly.graph_objects as pg
 
 
-def single_dumbell(label, base, update, c_scale, limits):
+def single_dumbell(label, base, update, limits, colorscale, scaling=[0, 0.5, 1]):
     fig = pg.Figure(
         data=[
             pg.Scatter(
@@ -23,23 +23,26 @@ def single_dumbell(label, base, update, c_scale, limits):
             pg.Scatter(x=[label],
             y=[base],
             name='2015',
-            mode="markers",
+            mode='markers',
             showlegend=False,
-            marker=dict(color="silver",
-                        size=32,)),
+            marker=dict(color='silver',
+                        size=16,)),
             pg.Scatter(
                 x=[label],
                 y=[update],
                 name='New scenario',
-                mode="markers",
+                mode='markers',
                 showlegend=False,
-                marker=dict(size=48,
-                            color=[update],
-                            colorscale=[[c_scale[0], '#8B424B'],
-                                        [c_scale[1], '#CCA857'],
-                                        [c_scale[2], '#7DB567']],
-                            cmin=limits[0],
-                            cmax=limits[1]),)
+                marker=dict(size=32,
+                            symbol='circle-open',
+                            line=dict(
+                                width=16),
+                                color=[update],
+                                colorscale=[[scaling[0], colorscale[0]],
+                                            [scaling[1], colorscale[1]],
+                                            [scaling[2], colorscale[2]]],
+                                cmin=limits[0],
+                                cmax=limits[1]),)
             ]
         )
     return fig

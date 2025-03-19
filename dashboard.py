@@ -92,15 +92,6 @@ app.layout = html.Div(
                                      style={'height':'80vh'}))],
                  width={'size':2})
          ])
-     
-
-        
-        
-        
-
-        # html.H3(id='output_values', style={'marginTop': 20}),
-        
-        
     ], style={'margin-left':'80px', 'margin-top':'0px', 'margin-right':'80px'})
 
 
@@ -131,20 +122,36 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
     z = torch.from_numpy(z)
     z = net(z.float()).data.numpy()
     fig1 = vi.single_dumbell('Net CO2e emissions % change',
-                             base[0], z[0], [0, 0.5, 1.0], [-1, 1])
-    fig1.update_xaxes(linecolor='black', mirror=True)
-    fig1.update_yaxes(range=[-1.25, 1.25], linecolor='black', mirror=True,)
+                             base[0], z[0], [-1, 1],
+                             ['#7DB567','#CCA857','#8B424B'])
+    fig1.update_xaxes(linecolor='black', mirror=True,
+                      title_font=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'),
+                      tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
+    fig1.update_yaxes(range=[-1.25, 1.25], linecolor='black', mirror=True,
+                      title_font=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'),
+                      tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
     fig1.update_layout(plot_bgcolor='white')
+    
     fig2 = vi.single_dumbell('Farmland productivity % change',
-                             base[1], z[1], [0, 0.5, 1.0], [-1, 1])
-    fig2.update_xaxes(linecolor='black', mirror=True)
-    fig2.update_yaxes(range=[-1.25, 1.25], linecolor='black', mirror=True)
+                             base[1], z[1], [-1, 1],
+                             ['#8B424B','#CCA857','#7DB567'])
+    fig2.update_xaxes(linecolor='black', mirror=True,
+                      title_font=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'),
+                      tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
+    fig2.update_yaxes(range=[-1.25, 1.25], linecolor='black', mirror=True,
+                      title_font=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'),
+                      tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
     fig2.update_layout(plot_bgcolor='white')
 
     fig3 = vi.single_dumbell('Geometric bird species population change',
-                             base[2], z[2], [0, 0.5, 1.0], [0.9, 1.2])
-    fig3.update_xaxes(linecolor='black', mirror=True)
-    fig3.update_yaxes(range=[0.9, 1.2], linecolor='black', mirror=True,)
+                             base[2], z[2], [0.9, 1.2],
+                             ['#8B424B','#CCA857','#7DB567'])
+    fig3.update_xaxes(linecolor='black', mirror=True,
+                      title_font=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'),
+                      tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
+    fig3.update_yaxes(range=[0.9, 1.2], linecolor='black', mirror=True,
+                      title_font=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'),
+                      tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
     fig3.update_layout(plot_bgcolor='white')
 
     return [fig1, fig2, fig3]
