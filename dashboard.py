@@ -156,7 +156,19 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
 
     return [fig1, fig2, fig3]
     
-
+# Grassland and organic constraint
+@app.callback(
+    [Output('grassland', 'value'), Output('organic', 'value')],
+    [Input('grassland', 'value'), Input('organic', 'value')]
+)
+def clamp_sum(g_val, o_val):
+    total = g_val + o_val
+    if total <= 1:
+      # No change needed
+      return g_val, o_val
+    else:
+      # Scale both values proportionally so their sum is 1
+      return g_val / total, o_val / total
 
 # def display_value(grassland, organic, peatland_lo, peatland_up,
 #                   silvoa, silvop, woodland, woodpa):
