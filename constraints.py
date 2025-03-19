@@ -31,4 +31,4 @@ constraints = [
   ]
 
 # Generate LaTeX specification document
-generateLatexSpecification(constraints)
+# generateLatexSpecification(constraints)
