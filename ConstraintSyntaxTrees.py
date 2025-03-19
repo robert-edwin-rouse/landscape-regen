@@ -146,24 +146,25 @@ def generateLatexSpecification(constraints : list[Constraint]):
   """
   Generate a LaTeX representation of a set of constraints
   """
-  baseTemplateStart = """\\documentclass{article} \
-\\usepackage{amsmath} \
-\\begin{document} \
-\\begin{center}
+  baseTemplateStart = """\\documentclass{article} \n\
+\\usepackage{amsmath} \n\
+\\begin{document} \n\
+\\begin{center} \n\
 \\begin{align*}
 """
   baseTemplateEnd = """
-\\end{align*} \
-\\end{center} \
+\\end{align*} \n\
+\\end{center} \n\
 \\end{document} \
 """
   # Generate the LaTeX for each constraint
   latexConstraints = []
   for constraint in constraints:
       if type(constraint) == str:
-        latexConstraints.append("\\end{align*}" + constraint + "\n\n\\begin{align*}")
+        latexConstraints.append("\\end{align*}\n\n" + constraint + "\n\n\\begin{align*}\n")
       else:
-        latexConstraints.append(constraint.toLatex() + "\\\\")
+        spacing = "\\\\\n" if constraint != constraints[-1] else ""
+        latexConstraints.append(constraint.toLatex() + spacing)
 
   # Join the constraints together
   constraintsString = "".join(latexConstraints)
