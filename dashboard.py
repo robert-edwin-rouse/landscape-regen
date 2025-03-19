@@ -36,7 +36,7 @@ slider_scale = {0:'0.0', 0.1:'0.1', 0.2:'0.2', 0.3:'0.3', 0.4:'0.4', 0.5:'0.5',
 
 app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.layout = html.Div(
-    [html.Img(className='banner', src='assets/Banner.png'),
+    [html.Img(className='banner', src='assets/Banner_cropped.png'),
      dbc.Row(
          [dbc.Col(html.Div([
             html.Label('Grassland Increase', className='slider_label'),
@@ -81,7 +81,9 @@ app.layout = html.Div(
             width={'size':6}),
          
          
-         dbc.Col([html.Div(dcc.Graph(id='output_graph'))], width={'size':6})
+         dbc.Col([html.Div(dcc.Graph(id='output_graph',
+                                     style={'height':'80vh'}))],
+                 width={'size':6})
          ])
      
 
@@ -92,7 +94,7 @@ app.layout = html.Div(
         # html.H3(id='output_values', style={'marginTop': 20}),
         
         
-    ], style={"margin": 20})
+    ], style={'margin-left':'80px', 'margin-top':'0px', 'margin-right':'80px'})
 
 
 # @app.callback(Output('my-graph', 'figure'),
