@@ -30,5 +30,5 @@ constraints = [
   , Expr("G") + Expr("O") <= 1
   ]
 
-# Generate LaTeX specification document
+# Uncomment me to generate LaTeX specification document when running the dashboard
 # generateLatexSpecification(constraints)
