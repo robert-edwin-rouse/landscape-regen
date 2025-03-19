@@ -136,6 +136,13 @@ class Expr:
               return str(self.value)
         return f"({self.value.toLatex()} {self.op} {self.right.toLatex()})"
 
+# Helper
+def var(name : str) -> Expr:
+    """
+    Create a variable expression
+    """
+    return Expr(name)
+
 # Print the constraints, for checking purposes
 def print_constraints(constraints : list[Constraint]):
     for constraint in constraints:
