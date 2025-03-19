@@ -98,7 +98,7 @@ pip install -r requirements.txt
 
 5. Launch the dashboard:
 ```sh
-python3 model_dashboard.py
+python3 dashboard.py
 ```
 This will notify you of the web address and port it is running on, e.g,
 
@@ -181,4 +181,4 @@ Project Link: [https://github.com/robert-edwin-rouse/landscape-regen](https://gi
 [issues-url]: https://github.com/robert-edwin-rouse/landscape-regen/issues
 [license-shield]: https://img.shields.io/github/license/robert-edwin-rouse/landscape-regen.svg?style=for-the-badge
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
-[product-screenshot]: figures/Normal.png
+[product-screenshot]: assets/Banner.png

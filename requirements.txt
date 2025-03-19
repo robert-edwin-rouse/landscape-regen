@@ -8,3 +8,4 @@ torch
 scikit-learn
 cdsapi
 dash
+dash-bootstrap-components

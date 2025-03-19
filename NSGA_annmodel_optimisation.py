@@ -10,10 +10,10 @@ import pandas as pd
 import numpy as np
 import torch
 import surrogate as sr
+import optimiser as op
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtk
 from apollo import mechanics as ma
-from pymoo.core.problem import ElementwiseProblem
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.operators.crossover.sbx import SBX
 from pymoo.operators.mutation.pm import PM
@@ -26,12 +26,10 @@ from pymoo.decomposition.asf import ASF
 
 ### Set plotting style parameters
 ma.textstyle()
-torch.manual_seed(42)
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 ### Data import, feature-target identification, and datasplit
-df  = pd.read_csv('miniLUSP_output.csv')
+df  = pd.read_csv('data/miniLUSP_output.csv')
 columns = df.columns.tolist()
 features = columns[1:9]
 targets = columns[9:]
@@ -39,53 +37,16 @@ xspace = ma.featurelocator(df, features)
 yspace = ma.featurelocator(df, targets)
 
 
-### Network Loading
+config = op.OptimizerConfig()
 net = torch.load('model.pt')
-
-class LandscapeOptimisation(ElementwiseProblem):
-    def __init__(self, model):
-        self.model = model
-        super().__init__(n_var=8,
-                         n_obj=3,
-                         n_ieq_constr=17,
-                         xl=np.array([0,0,0,0,0,0,0,0]),
-                         xu=np.array([1,1,1,1,1,0.35,1,1]))
-
-    def _evaluate(self, x, out, *args, **kwargs):
-        z = torch.from_numpy(x)
-        z = self.model(z.float()).data.numpy()
-        out["F"] = [z[0], -z[1], -z[2]]
-        out["G"] = self._calculate_constraints(x, z)
-    
-    def _calculate_constraints(self, x, z):
-        constraints = [x[0] + x[1] - 1,
-                    x[2]*0.02781 + x[0] - 1,
-                    x[2]*0.02701 + x[1] - 1,
-                    x[4]*0.3799 + x[0] - 1,
-                    x[4]*0.3690 + x[1] - 1,
-                    x[4]*0.4815 + x[6] - 1,
-                    x[5]*0.3667 + x[0] - 1,
-                    x[5]*0.3561 + x[1] - 1,
-                    x[5]*0.4648 + x[6] - 1,
-                    x[5]*0.7934 + x[7] - 1,
-                    x[0]*1.3393 + x[6] - 1.3393,
-                    x[1]*1.3791 + x[6] - 1.3791,
-                    x[7]*0.5858 + x[6] - 1.0818,
-                    x[0]*1.2298 + x[7] - 1.3617,
-                    x[1]*1.2065 + x[7] - 1.3384,
-                    0 - z[1],
-                    -1 - z[0],]
-        return constraints
-
-
-problem = LandscapeOptimisation(net)
+problem = op.LandscapeOptimisation(net)
 
 algorithm = NSGA2(
-    pop_size=500,
-    n_offsprings=20,
+    pop_size=config.population_size,
+    n_offsprings=config.offspring,
     sampling=FloatRandomSampling(),
-    crossover=SBX(prob=0.8, eta=16),
-    mutation=PM(eta=10),
+    crossover=SBX(prob=config.crossover_probability, eta=config.crossover_eta),
+    mutation=PM(eta=config.mutation_eta),
     eliminate_duplicates=True
 )
 termination = get_termination("n_gen", 2000)
@@ -93,7 +54,7 @@ termination = get_termination("n_gen", 2000)
 res = minimize(problem,
                algorithm,
                termination,
-               seed=42,
+               seed=config.random_seed,
                save_history=True,
                verbose=True)
 
