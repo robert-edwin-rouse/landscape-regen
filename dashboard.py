@@ -100,7 +100,8 @@ app.layout = html.Div(
                 dbc.Col([ html.H3(['Agricultural Output',html.Br(),'% Change'],
                                      className='graph_heading') ],
                         width={'size':4}, align="end"),
-                dbc.Col([ html.H3(['Bird Populations',html.Br(),'Geometric Change'],
+                dbc.Col([ html.H3(['Bird Populations',html.Br(),
+                                   'Geometric',html.Br(),'Change'],
                                      className='graph_heading') ],
                         width={'size':4}, align="end")
                 ], style={"height": "20%"}),
