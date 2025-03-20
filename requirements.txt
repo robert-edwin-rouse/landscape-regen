@@ -9,3 +9,4 @@ scikit-learn
 cdsapi
 dash
 dash-bootstrap-components
+geopandas

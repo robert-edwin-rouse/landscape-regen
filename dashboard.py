@@ -10,15 +10,21 @@ import dash
 import torch
 import surrogate as sr
 import visualisation as vi
-import matplotlib.pyplot as plt
+
 from torch.autograd import Variable
 from apollo import mechanics as ma
 from dash import Dash, dcc, html, Input, Output, callback
 import dash_bootstrap_components as dbc
 from plotly.subplots import make_subplots
-import plotly.graph_objects as px
+import plotly.express as px
+import plotly.graph_objects as go
 
-# Constraints for the model are defined here
+# Set non-interactive backend to avoid threading issues
+import matplotlib
+matplotlib.use('Agg')
+import geopandas as gpd
+
+# Constraints for the model are defined here
 from constraints import constraints, Constraint
 
 ### Set plotting style parameters
@@ -81,8 +87,10 @@ app.layout = html.Div(
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='woodpa'),]),
-            width={'size':6})
-             ,
+            width={'size':3}),
+          
+        dbc.Col([html.Div(dcc.Graph(id='uk-map', style={'height':'80vh'}))],
+                width={'size':3}),
             
         dbc.Col([
             dbc.Row([
@@ -113,6 +121,7 @@ app.layout = html.Div(
         
         )],
     style={'margin-left':'80px', 'margin-top':'0px', 'margin-right':'80px'})
+>>>>>>> main
 
 
 # @app.callback(Output('my-graph', 'figure'),
@@ -121,7 +130,7 @@ app.layout = html.Div(
               Output('fig1','figure'),
               Output('fig2','figure'),
               Output('fig3','figure'),
-              Output('fig4','figure'),
+              Output('uk-map', 'figure'),
               Input('grassland', 'value'),
               Input('organic', 'value'),
               Input('peatland_lo', 'value'),
@@ -181,7 +190,9 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
     fig3.update_layout(plot_bgcolor='white',
                        margin=dict(l=60, r=60, t=20, b=20))
 
-    return [fig1, fig2, fig3]
+    uk_map = loadukmap_plotly(grassland, organic)
+    
+    return [fig1, fig2, fig3, uk_map]
 
 # Enforce invariants on the sliders
 @app.callback(
@@ -256,6 +267,90 @@ def enforce_slider_constraints(g_val, o_val, p_lo, s_a, s_p, w_l, w_p):
 
 #     # return lst, fig
 #     return fig
+
+def loadukmap_plotly(grassland_value=0, organic_value = 0):
+    """Load UK hexagon map and convert to plotly figure"""
+
+    # Map from category to colours
+    colour_map = {
+        'grassland': 'rgba(125, 181, 103, 0.8)',
+        'organic': 'rgba(255, 165, 0, 0.8)'
+    }
+
+    # Load file
+    geoData = gpd.read_file("geogHEXLA.json")
+    
+    # Create a plotly figure directly instead of going through matplotlib
+    fig = go.Figure()
+    
+    # Sort hexagons by y-coordinate to fill from bottom up
+    geoData['centroid_y'] = geoData.geometry.centroid.y
+    geoData = geoData.sort_values('centroid_y')
+    
+    # Calculate how many hexagons to fill based on grassland value
+    total_hexagons = len(geoData)
+
+    # map from category to number of hexagons to fill
+    hex_count = {}
+    hex_count['grassland'] = int(total_hexagons * grassland_value)
+    hex_count['organic'] = int(total_hexagons * organic_value)
+
+    # make list of colours
+    colours = []
+    # loop through the hex_count structure
+    for category, count in hex_count.items():
+      colours = colours + [colour_map[category]] * count
+    # put white for the rest
+    colours = colours + (['white'] * (len(geoData) - len(colours)))
+
+    # Add each hexagon as a separate polygon
+    fill_count = 0
+    for idx, (_, row) in enumerate(geoData.iterrows()):
+        # Determine color based on fill status
+        color = colours[idx]
+        
+        # Get polygon coordinates and convert to lists
+        x, y = row.geometry.exterior.xy
+        x_list = list(x)  # Convert array.array to list
+        y_list = list(y)  # Convert array.array to list
+        
+        # Add polygon to figure
+        fig.add_trace(go.Scatter(
+            x=x_list,
+            y=y_list,
+            fill="toself",
+            fillcolor=color,
+            line=dict(color='black', width=0.5),
+            mode='lines',
+            showlegend=False
+        ))
+    
+    # Configure layout
+    fig.update_layout(
+        margin={"r": 0, "t": 0, "l": 0, "b": 0},
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        showlegend=False,
+        xaxis=dict(
+            showgrid=False,
+            zeroline=False,
+            showticklabels=False,
+            visible=False,
+            fixedrange=True
+        ),
+        yaxis=dict(
+            showgrid=False,
+            zeroline=False,
+            showticklabels=False,
+            visible=False,
+            scaleanchor="x",
+            scaleratio=1.4,
+            fixedrange=True,
+            # Add range to control y-axis size
+        )
+    )
+    
+    return fig
 
 if __name__ == "__main__":
     # for backwards compatibility, use the `run_server` method if its defined otherwise
