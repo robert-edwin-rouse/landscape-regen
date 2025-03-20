@@ -18,7 +18,7 @@ import dash_bootstrap_components as dbc
 from plotly.subplots import make_subplots
 import plotly.graph_objects as px
 
-# Constraints for the model are defined here
+# Constraints for the model are defined here
 from constraints import constraints, Constraint
 
 ### Set plotting style parameters
@@ -81,20 +81,38 @@ app.layout = html.Div(
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='woodpa'),]),
-            width={'size':6}),
-
-
-         dbc.Col([html.Div(dcc.Graph(id='fig1',
-                                     style={'height':'80vh'}))],
-                 width={'size':2}),
-         dbc.Col([html.Div(dcc.Graph(id='fig2',
-                                     style={'height':'80vh'}))],
-                 width={'size':2}),
-         dbc.Col([html.Div(dcc.Graph(id='fig3',
-                                     style={'height':'80vh'}))],
-                 width={'size':2})
-         ])
-    ], style={'margin-left':'80px', 'margin-top':'0px', 'margin-right':'80px'})
+            width={'size':6})
+             ,
+            
+        dbc.Col([
+            dbc.Row([
+                dbc.Col([ html.H3(['Net CO2e Emissions',html.Br(),'% Change'],
+                                     className='graph_heading') ],
+                        width={'size':4}, align="end"),
+                dbc.Col([ html.H3(['Agricultural Output',html.Br(),'% Change'],
+                                     className='graph_heading') ],
+                        width={'size':4}, align="end"),
+                dbc.Col([ html.H3(['Bird Populations',html.Br(),'Geometric Change'],
+                                     className='graph_heading') ],
+                        width={'size':4}, align="end")
+                ], style={"height": "10%"}),
+            dbc.Row([
+                dbc.Col([ html.Div(dcc.Graph(id='fig1',
+                                            style={'height':'70vh'})) ],
+                        width={'size':4}, align="start"),
+                dbc.Col([ html.Div(dcc.Graph(id='fig2',
+                                            style={'height':'70vh'})) ],
+                        width={'size':4}, align="start"),
+                dbc.Col([ html.Div(dcc.Graph(id='fig3',
+                                            style={'height':'70vh'})) ],
+                        width={'size':4}, align="start")
+                ])
+            ], width={'size':6})]
+        
+        
+        
+        )],
+    style={'margin-left':'80px', 'margin-top':'0px', 'margin-right':'80px'})
 
 
 # @app.callback(Output('my-graph', 'figure'),
@@ -127,38 +145,44 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
                              base[0], z[0], [-1, 1],
                              ['#7DB567','#CCA857','#8B424B'])
     fig1.update_xaxes(linecolor='black', mirror=True,
+                      showticklabels=False,
                       title_font=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'),
                       tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
     fig1.update_yaxes(range=[-1.25, 1.25], linecolor='black', mirror=True,
                       title_font=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'),
                       tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
-    fig1.update_layout(plot_bgcolor='white')
+    fig1.update_layout(plot_bgcolor='white',
+                       margin=dict(l=60, r=60, t=20, b=20))
 
     fig2 = vi.single_dumbell('Farmland productivity % change',
                              base[1], z[1], [-1, 1],
                              ['#8B424B','#CCA857','#7DB567'])
     fig2.update_xaxes(linecolor='black', mirror=True,
+                      showticklabels=False,
                       title_font=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'),
                       tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
     fig2.update_yaxes(range=[-1.25, 1.25], linecolor='black', mirror=True,
                       title_font=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'),
                       tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
-    fig2.update_layout(plot_bgcolor='white')
+    fig2.update_layout(plot_bgcolor='white',
+                       margin=dict(l=60, r=60, t=20, b=20))
 
     fig3 = vi.single_dumbell('Geometric bird species population change',
                              base[2], z[2], [0.9, 1.2],
                              ['#8B424B','#CCA857','#7DB567'])
     fig3.update_xaxes(linecolor='black', mirror=True,
+                      showticklabels=False,
                       title_font=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'),
                       tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
     fig3.update_yaxes(range=[0.9, 1.2], linecolor='black', mirror=True,
                       title_font=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'),
                       tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
-    fig3.update_layout(plot_bgcolor='white')
+    fig3.update_layout(plot_bgcolor='white',
+                       margin=dict(l=60, r=60, t=20, b=20))
 
     return [fig1, fig2, fig3]
 
-# Enforce invariants on the sliders
+# Enforce invariants on the sliders
 @app.callback(
    # All the sliders
     [Output('grassland', 'value'), Output('organic', 'value'), Output('peatland_lo', 'value')
@@ -233,7 +257,7 @@ def enforce_slider_constraints(g_val, o_val, p_lo, s_a, s_p, w_l, w_p):
 #     return fig
 
 if __name__ == "__main__":
-    # for backwards compatibility, use the `run_server` method if its defined otherwise
+    # for backwards compatibility, use the `run_server` method if its defined otherwise
     # use `run`
     if "run_server" in app.__dir__():
       app.run_server(debug=True,  host='127.0.0.1', port='8051')

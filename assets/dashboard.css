@@ -18,6 +18,15 @@
   padding-bottom: 40;
 }
 
+.graph_heading{
+    font-family: 'GlacialBold';
+    font-size: 20px;
+    color: #000000;
+    padding-top: 20px;
+    padding-bottom: 2.5px;
+    text-align: center;
+}
+
 .slider_label{
     font-family: 'GlacialBold';
     font-size: 20px;
