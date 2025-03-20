@@ -25,7 +25,7 @@ def single_dumbell(label, base, update, limits, colorscale, scaling=[0, 0.5, 1])
             name='2015',
             mode='markers',
             showlegend=False,
-            marker=dict(color='silver',
+            marker=dict(color='black',
                         size=16,)),
             pg.Scatter(
                 x=[label],
@@ -36,7 +36,7 @@ def single_dumbell(label, base, update, limits, colorscale, scaling=[0, 0.5, 1])
                 marker=dict(size=32,
                             symbol='circle-open',
                             line=dict(
-                                width=16),
+                                width=8),
                                 color=[update],
                                 colorscale=[[scaling[0], colorscale[0]],
                                             [scaling[1], colorscale[1]],
