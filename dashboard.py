@@ -52,12 +52,12 @@ app.layout = html.Div(
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='organic'),
 
-            html.Label('Peatland (Lower) Increase', className='slider_label'),
+            html.Label('Peatland (Lowland) Increase', className='slider_label'),
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='peatland_lo'),
 
-            html.Label('Peatland (Upper) Increase', className='slider_label'),
+            html.Label('Peatland (Upland) Increase', className='slider_label'),
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='peatland_up'),
@@ -121,6 +121,7 @@ app.layout = html.Div(
               Output('fig1','figure'),
               Output('fig2','figure'),
               Output('fig3','figure'),
+              Output('fig4','figure'),
               Input('grassland', 'value'),
               Input('organic', 'value'),
               Input('peatland_lo', 'value'),
