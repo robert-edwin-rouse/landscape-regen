@@ -24,7 +24,7 @@ import matplotlib
 matplotlib.use('Agg')
 import geopandas as gpd
 
-# Constraints for the model are defined here
+# Constraints for the model are defined here
 from constraints import constraints, Constraint
 
 ### Set plotting style parameters
@@ -87,10 +87,10 @@ app.layout = html.Div(
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='woodpa'),]),
-            width={'size':3}),
+            width={'size':4}),
           
         dbc.Col([html.Div(dcc.Graph(id='uk-map', style={'height':'80vh'}))],
-                width={'size':3}),
+                width={'size':4}),
             
         dbc.Col([
             dbc.Row([
@@ -103,25 +103,24 @@ app.layout = html.Div(
                 dbc.Col([ html.H3(['Bird Populations',html.Br(),'Geometric Change'],
                                      className='graph_heading') ],
                         width={'size':4}, align="end")
-                ], style={"height": "10%"}),
+                ], style={"height": "20%"}),
             dbc.Row([
                 dbc.Col([ html.Div(dcc.Graph(id='fig1',
-                                            style={'height':'70vh'})) ],
+                                            style={'height':'60vh'})) ],
                         width={'size':4}, align="start"),
                 dbc.Col([ html.Div(dcc.Graph(id='fig2',
-                                            style={'height':'70vh'})) ],
+                                            style={'height':'60vh'})) ],
                         width={'size':4}, align="start"),
                 dbc.Col([ html.Div(dcc.Graph(id='fig3',
-                                            style={'height':'70vh'})) ],
+                                            style={'height':'60vh'})) ],
                         width={'size':4}, align="start")
                 ])
-            ], width={'size':6})]
+            ], width={'size':4})]
         
         
         
         )],
     style={'margin-left':'80px', 'margin-top':'0px', 'margin-right':'80px'})
->>>>>>> main
 
 
 # @app.callback(Output('my-graph', 'figure'),
@@ -189,6 +188,8 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
                       tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
     fig3.update_layout(plot_bgcolor='white',
                        margin=dict(l=60, r=60, t=20, b=20))
+    
+    
 
     uk_map = loadukmap_plotly(grassland, organic)
     
@@ -297,7 +298,7 @@ def loadukmap_plotly(grassland_value=0, organic_value = 0):
 
     # make list of colours
     colours = []
-    # loop through the hex_count structure
+    # loop through the hex_count structure
     for category, count in hex_count.items():
       colours = colours + [colour_map[category]] * count
     # put white for the rest
