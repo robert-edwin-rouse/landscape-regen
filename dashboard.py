@@ -103,9 +103,17 @@ app.layout = html.Div(
                           updatemode='drag', id='woodpa'),]),
             width={'size':4}),
           
-        dbc.Col([html.Div(dcc.Graph(id='uk-map', style={'height':'80vh'}))],
-                width={'size':4}),
+        dbc.Col([
+            dbc.Row([html.H3(['Illustrative Land Use Allocation'], className='graph_heading')],
+                    style={"height": "10%"}, align="end"),
+            dbc.Row([html.Div(dcc.Graph(id='uk-map',style={'height':'60vh'}))],
+                    style={"height": "80%"}),
+            dbc.Row([ html.Img(className='banner', src='assets/Key.png') ],
+                    )
+                ],
+            width={'size':4}),
             
+        
         dbc.Col([
             dbc.Row([
                 dbc.Col([ html.H3(['Net CO2e Emissions',html.Br(),'% Change'],
@@ -296,13 +304,13 @@ def loadukmap_plotly(area_dict, grassland_value=0, organic_value=0,
     # Map from category to colours
     colour_map = {
         'grassland': 'rgba(148, 193, 145, 0.8)',
-        'organic': 'rgba(208, 221, 171, 0.8)',
-        'peatland_lo': 'rgba(127, 151, 173, 0.8)',
+        'organic': 'rgba(216, 216, 158, 0.8)',
+        'peatland_lo': 'rgba(118, 179, 193, 0.8)',
         'peatland_up': 'rgba(175, 165, 150, 0.8)',
-        'silvoa': 'rgba(175, 175, 175, 0.8)',
+        'silvoa': 'rgba(195, 195, 195, 0.8)',
         'silvop': 'rgba(160, 127, 145, 0.8)',
-        'woodland': 'rgba(72, 108, 88, 0.8)',
-        'woodpa': 'rgba(92, 132, 131, 0.8)',
+        'woodland': 'rgba(61, 86, 58, 0.8)',
+        'woodpa': 'rgba(92, 130, 116, 0.8)',
         'farmland': 'rgba(221, 181, 128, 0.8)',
         'not_used': 'rgba(91, 91, 91, 0.8)',
     }
