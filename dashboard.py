@@ -8,9 +8,9 @@ import pandas as pd
 import numpy as np
 import dash
 import torch
+import random
 import surrogate as sr
 import visualisation as vi
-
 from torch.autograd import Variable
 from apollo import mechanics as ma
 from dash import Dash, dcc, html, Input, Output, callback
@@ -18,6 +18,7 @@ import dash_bootstrap_components as dbc
 from plotly.subplots import make_subplots
 import plotly.express as px
 import plotly.graph_objects as go
+
 
 # Set non-interactive backend to avoid threading issues
 import matplotlib
@@ -30,6 +31,7 @@ from constraints import constraints, Constraint
 ### Set plotting style parameters
 ma.textstyle()
 
+random.seed(42)
 
 ### Set global model parameters
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -39,6 +41,18 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 net = torch.load('model.pt', weights_only=False)
 net.eval()
 
+area_dict = {
+        'grassland': [11639928.2227896, 0.470769699212438],
+        'organic': [11985582.5855, 0.484749476170689],
+        'peatland_lo': [323753.4375, 0.0130940075809454],
+        'peatland_up': [1897761.25, 0.0767537802415596],
+        'silvoa': [4422140.20438513, 0.178850726056685],
+        'silvop': [4268544.37239956, 0.172638637610765],
+        'woodland': [9183888.07678469, 0.371436674243724],
+        'woodpa': [5380110.83904161, 0.217595255997051],
+        'farmland': [14725553.5855, 0.595565908955501],
+        'not_used': [9999759.5395, 0.404434091044499],
+    }
 
 slider_scale = {0:'0.0', 0.1:'0.1', 0.2:'0.2', 0.3:'0.3', 0.4:'0.4', 0.5:'0.5',
                 0.6:'0.6', 0.7:'0.7', 0.8:'0.8', 0.9:'0.9', 1.0:'1.0'}
@@ -184,15 +198,17 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
                       showticklabels=False,
                       title_font=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'),
                       tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
-    fig3.update_yaxes(range=[0.9, 1.2], linecolor='black', mirror=True,
+    fig3.update_yaxes(range=[0.9, 1.2], linecolor='black', mirror=True,  
                       title_font=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'),
                       tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
     fig3.update_layout(plot_bgcolor='white',
-                       margin=dict(l=60, r=60, t=20, b=20))
+                       margin=dict(l=60, r=60, t=20, b=20),)
+    fig3.layout.font.family = 'Arial Black'
     
     
 
-    uk_map = loadukmap_plotly(grassland, organic)
+    uk_map = loadukmap_plotly(area_dict, grassland, organic, peatland_lo,
+                              peatland_up, silvoa, silvop, woodland, woodpa)
     
     return [fig1, fig2, fig3, uk_map]
 
@@ -270,13 +286,25 @@ def enforce_slider_constraints(g_val, o_val, p_lo, s_a, s_p, w_l, w_p):
 #     # return lst, fig
 #     return fig
 
-def loadukmap_plotly(grassland_value=0, organic_value = 0):
+
+def loadukmap_plotly(area_dict, grassland_value=0, organic_value=0,
+                     peatland_lo_value=0, peatland_up_value=0,
+                     silvoa_value=0, silvop_value=0,
+                     woodland_value=0, woodpa_value=0,):
     """Load UK hexagon map and convert to plotly figure"""
 
     # Map from category to colours
     colour_map = {
-        'grassland': 'rgba(125, 181, 103, 0.8)',
-        'organic': 'rgba(255, 165, 0, 0.8)'
+        'grassland': 'rgba(148, 193, 145, 0.8)',
+        'organic': 'rgba(208, 221, 171, 0.8)',
+        'peatland_lo': 'rgba(127, 151, 173, 0.8)',
+        'peatland_up': 'rgba(175, 165, 150, 0.8)',
+        'silvoa': 'rgba(175, 175, 175, 0.8)',
+        'silvop': 'rgba(160, 127, 145, 0.8)',
+        'woodland': 'rgba(72, 108, 88, 0.8)',
+        'woodpa': 'rgba(92, 132, 131, 0.8)',
+        'farmland': 'rgba(221, 181, 128, 0.8)',
+        'not_used': 'rgba(91, 91, 91, 0.8)',
     }
 
     # Load file
@@ -291,11 +319,30 @@ def loadukmap_plotly(grassland_value=0, organic_value = 0):
     
     # Calculate how many hexagons to fill based on grassland value
     total_hexagons = len(geoData)
+    
 
     # map from category to number of hexagons to fill
     hex_count = {}
-    hex_count['grassland'] = int(total_hexagons * grassland_value)
-    hex_count['organic'] = int(total_hexagons * organic_value)
+    hex_count['not_used'] = int(total_hexagons * area_dict['not_used'][1])
+
+    hex_count['grassland'] = int(total_hexagons * grassland_value * \
+                                 area_dict['grassland'][1])
+    hex_count['organic'] = int(total_hexagons * organic_value * \
+                                 area_dict['organic'][1])
+    hex_count['peatland_lo'] = int(total_hexagons * peatland_lo_value* \
+                                 area_dict['peatland_lo'][1])
+    hex_count['peatland_up'] = int(total_hexagons * peatland_up_value* \
+                                 area_dict['peatland_up'][1])
+    hex_count['silvoa'] = int(total_hexagons * silvoa_value* \
+                                 area_dict['silvoa'][1])
+    hex_count['silvop'] = int(total_hexagons * silvop_value* \
+                                 area_dict['silvop'][1])
+    hex_count['woodland'] = int(total_hexagons * woodland_value* \
+                                 area_dict['woodland'][1])
+    hex_count['woodpa'] = int(total_hexagons * woodpa_value* \
+                                 area_dict['woodpa'][1])
+    residual_count = sum(hex_count.values())
+    hex_count['farmland'] = total_hexagons - residual_count
 
     # make list of colours
     colours = []
@@ -304,7 +351,8 @@ def loadukmap_plotly(grassland_value=0, organic_value = 0):
       colours = colours + [colour_map[category]] * count
     # put white for the rest
     colours = colours + (['white'] * (len(geoData) - len(colours)))
-
+    colours = random.sample(colours, len(colours))
+    
     # Add each hexagon as a separate polygon
     fill_count = 0
     for idx, (_, row) in enumerate(geoData.iterrows()):
