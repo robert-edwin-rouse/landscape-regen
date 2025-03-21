@@ -62,42 +62,44 @@ app.layout = html.Div(
     [html.Img(className='banner', src='assets/Banner_cropped.png'),
      dbc.Row(
          [dbc.Col(html.Div([
-            html.Label('Grassland Increase', className='slider_label'),
+            html.H3(['Conversion of Conventional Farmland Into:'],
+                                 className='graph_heading'),
+            html.Label('Grassland', className='slider_label'),
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='grassland'),
 
-            html.Label('Organic Increase', className='slider_label'),
+            html.Label('Organic & Regenerative Farmland', className='slider_label'),
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='organic'),
 
-            html.Label('Peatland (Lowland) Increase', className='slider_label'),
+            html.Label('Peatland (Lowland)', className='slider_label'),
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='peatland_lo'),
 
-            html.Label('Peatland (Upland) Increase', className='slider_label'),
+            html.Label('Peatland (Upland)', className='slider_label'),
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='peatland_up'),
 
-            html.Label('Silvoarable Increase', className='slider_label'),
+            html.Label('Silvoarable (Mixed Crop Farming with Trees)', className='slider_label'),
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='silvoa'),
 
-            html.Label('Silvopastoral Increase', className='slider_label'),
+            html.Label('Silvopastoral (Mixed Livestock Grazing with Trees)', className='slider_label'),
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='silvop'),
 
-            html.Label('Woodland Increase', className='slider_label'),
+            html.Label('Woodland', className='slider_label'),
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='woodland'),
 
-            html.Label('Wood Pasture Increase', className='slider_label'),
+            html.Label('Wood Pasture', className='slider_label'),
             dcc.Slider(min=0, max=1, step=0.0001, marks=slider_scale, value=0,
                           tooltip={'placement': 'bottom', 'always_visible': True},
                           updatemode='drag', id='woodpa'),]),
@@ -122,8 +124,8 @@ app.layout = html.Div(
                 dbc.Col([ html.H3(['Agricultural Output',html.Br(),'% Change'],
                                      className='graph_heading') ],
                         width={'size':4}, align="end"),
-                dbc.Col([ html.H3(['Bird Populations',html.Br(),
-                                   'Geometric',html.Br(),'Change'],
+                dbc.Col([ html.H3(['Average Bird',html.Br(),
+                                   'Species Population',html.Br(),'% Change'],
                                      className='graph_heading') ],
                         width={'size':4}, align="end")
                 ], style={"height": "20%"}),
@@ -180,7 +182,7 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
                       showticklabels=False,
                       title_font=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'),
                       tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
-    fig1.update_yaxes(range=[-1.25, 1.25], linecolor='black', mirror=True,
+    fig1.update_yaxes(range=[-2, 1.25], linecolor='black', mirror=True,
                       title_font=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'),
                       tickfont=dict(size=18, family='assets/fonts/GlacialIndifference-Bold.otf'))
     fig1.update_layout(plot_bgcolor='white',
@@ -200,7 +202,7 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
                        margin=dict(l=60, r=60, t=20, b=20))
 
     fig3 = vi.single_dumbell('Geometric bird species population change',
-                             base[2], z[2], [0.9, 1.2],
+                             base[2]*1.0081, z[2]*1.0081, [0.9, 1.2],
                              ['#8B424B','#CCA857','#7DB567'])
     fig3.update_xaxes(linecolor='black', mirror=True,
                       showticklabels=False,
