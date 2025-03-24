@@ -36,6 +36,8 @@ random.seed(42)
 ### Set global model parameters
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+pareto = pd.read_csv('data/Pareto_5000.csv')
+
 
 ### Network Loading
 net = torch.load('model.pt', weights_only=False)
@@ -109,7 +111,7 @@ app.layout = html.Div(
             dbc.Row([html.H3(['Illustrative Land Use Allocation'], className='graph_heading')],
                     style={"height": "10%"}, align="end"),
             dbc.Row([html.Div(dcc.Graph(id='uk-map',style={'height':'60vh'}))],
-                    style={"height": "80%"}),
+                    style={"height": "75%"}),
             dbc.Row([ html.Img(className='banner', src='assets/Key.png') ],
                     )
                 ],
@@ -124,8 +126,8 @@ app.layout = html.Div(
                 dbc.Col([ html.H3(['Agricultural Output',html.Br(),'% Change'],
                                      className='graph_heading') ],
                         width={'size':4}, align="end"),
-                dbc.Col([ html.H3(['Average Bird',html.Br(),
-                                   'Species Population',html.Br(),'% Change'],
+                dbc.Col([ html.H3(['Bird Species',html.Br(),
+                                   'Population',html.Br(),'% Change'],
                                      className='graph_heading') ],
                         width={'size':4}, align="end")
                 ], style={"height": "20%"}),
@@ -140,21 +142,40 @@ app.layout = html.Div(
                                             style={'height':'60vh'})) ],
                         width={'size':4}, align="start")
                 ])
-            ], width={'size':4})]
+            ], width={'size':4})],
+         
+         # dbc.Row([
+         #     dbc.Col([
+         #         html.Div(children=[
+         #                    html.H1(id='score_text'),
+         #                ]),
+         #         ]),
+         #     ])
         
-        
-        
-        )],
+        ),
+         dbc.Row([
+             dbc.Col([ html.Div(dcc.Graph(id='fig4',
+                                         style={'height':'60vh'})) ],
+                     width={'size':4}, align="start"),
+             dbc.Col([ html.Div(dcc.Graph(id='fig5',
+                                         style={'height':'60vh'})) ],
+                     width={'size':4}, align="start"),
+             dbc.Col([ html.Div(dcc.Graph(id='fig6',
+                                         style={'height':'60vh'})) ],
+                     width={'size':4}, align="start")
+             ])
+         ],
     style={'margin-left':'80px', 'margin-top':'0px', 'margin-right':'80px'})
 
 
 # @app.callback(Output('my-graph', 'figure'),
-@app.callback(
-                # Output('output_values', 'children'),
-              Output('fig1','figure'),
+@app.callback(Output('fig1','figure'),
               Output('fig2','figure'),
               Output('fig3','figure'),
               Output('uk-map', 'figure'),
+              Output('fig4','figure'),
+              Output('fig5','figure'),
+              Output('fig6','figure'),
               Input('grassland', 'value'),
               Input('organic', 'value'),
               Input('peatland_lo', 'value'),
@@ -166,8 +187,21 @@ app.layout = html.Div(
               )
 
 
+# def euclid_distance(candidates, target):
+#     distances = np.linalg.norm(candidates - target, axis=1)
+#     closest_idx = np.argmin(distances)
+#     return closest_idx, distances[closest_idx]
+
+# def scoring(base_dist, new_dist):
+#     if new_dist>base_dist:
+#         score = 0
+#     else:
+#         score = 100 * (1 - (base_dist/new_dist))
+#     return score
+    
+
 def display_value(grassland, organic, peatland_lo, peatland_up,
-                  silvoa, silvop, woodland, woodpa):
+                  silvoa, silvop, woodland, woodpa, pareto=pareto):
     base = np.zeros((8,))
     base = torch.from_numpy(base)
     base = net(base.float()).data.numpy()
@@ -175,6 +209,8 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
                       silvoa, silvop, woodland, woodpa])
     z = torch.from_numpy(z)
     z = net(z.float()).data.numpy()
+    col_list = ['gwp_rel', 'food_rel', 'birds_rel']
+    zf = pd.DataFrame(z.reshape(1,-1), columns=col_list)
     fig1 = vi.single_dumbell('Net CO2e emissions % change',
                              base[0], z[0], [-1, 1],
                              ['#7DB567','#CCA857','#8B424B'])
@@ -215,12 +251,47 @@ def display_value(grassland, organic, peatland_lo, peatland_up,
                        margin=dict(l=60, r=60, t=20, b=20),)
     fig3.layout.font.family = 'Arial Black'
     
-    
+    fig4 = vi.dashboard_pareto_scatter('Text',
+                                       pareto['gwp_rel'],
+                                       pareto['food_rel'],
+                                       pareto['birds_rel'],
+                                       zf['gwp_rel'], zf['food_rel'], [0.9, 1.2],
+                                       ['#8B424B','#CCA857','#7DB567'])
+    fig4.update_layout(plot_bgcolor='white')
+    fig5 = vi.dashboard_pareto_scatter('Text',
+                                       pareto['birds_rel'],
+                                       pareto['food_rel'],
+                                       pareto['gwp_rel'],
+                                       zf['birds_rel'], zf['food_rel'], [-1, 1],
+                                       ['#8B424B','#CCA857','#7DB567'])
+    fig5.update_layout(plot_bgcolor='white')
+    fig6 = vi.dashboard_pareto_scatter('Text',
+                                       pareto['birds_rel'],
+                                       pareto['gwp_rel'],
+                                       pareto['food_rel'],
+                                       zf['birds_rel'], zf['gwp_rel'], [-1, 1],
+                                       ['#8B424B','#CCA857','#7DB567'])
+    fig6.update_layout(plot_bgcolor='white')
 
+    # pareto_arr = pareto[['gwp_rel','food_rel', 'birds_rel']].to_numpy()
+    # _, base_dist = euclid_distance(pareto_arr, base)
+    # _, new_dist = euclid_distance(pareto_arr, z)
+    # score = scoring(base_dist, new_dist)
+    # score_text = 'Relative geometric change across 120 terrestrial \
+    #         bird species populations : {}'.format(score)
+    # fig = px.scatter(x=data_x, y=data_y, trendline="ols",
+    #               trendline_color_override="black",)
+
+    # fig.update_traces(marker=dict( size=10, color=data_y, 
+    #                           colorscale='YlGn', showscale=True,
+    #                           colorbar_x=-0.3),
+    #              )
+    
+    
     uk_map = loadukmap_plotly(area_dict, grassland, organic, peatland_lo,
                               peatland_up, silvoa, silvop, woodland, woodpa)
     
-    return [fig1, fig2, fig3, uk_map]
+    return [fig1, fig2, fig3, uk_map, fig4, fig5, fig6]
 
 # Enforce invariants on the sliders
 @app.callback(
