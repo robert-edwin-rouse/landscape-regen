@@ -315,58 +315,6 @@ def enforce_slider_constraints(g_val, o_val, p_lo, s_a, s_p, w_l, w_p):
     # Return the balanced values back to the UI
     return (model["G"], model["O"], model["P_lo"], model["S_A"], model["S_P"], model["WL"], model["WP"])
 
-# def display_value(grassland, organic, peatland_lo, peatland_up,
-#                   silvoa, silvop, woodland, woodpa):
-#     z = np.array([grassland, organic, peatland_lo, peatland_up,
-#                       silvoa, silvop, woodland, woodpa])
-#     z = torch.from_numpy(z)
-#     z = net(z.float()).data.numpy()
-#     nl = html.Br() # dash html component
-#     lst1 = 'Relative change in net CO2e emissions : {}'.format(z[0])
-#     lst2 = 'Relative change in total calorific production \
-#             from UK farmland: {}'.format(z[1])
-#     lst3 = 'Relative geometric change across 120 terrestrial \
-#             bird species populations : {}'.format(z[2])
-#     lst = [nl, lst1, nl, nl, lst2, nl, nl, lst3]
-
-#     fig = make_subplots(rows=1, cols=3, shared_yaxes=False)
-#     fig.add_trace(px.Bar(x=['Change in net CO2e emissions'], y=[z[0]],
-#                          marker=dict(
-#                              color=[z[0]],
-#                              colorscale=[[0, '#7DB567'],
-#                                          [0.5, '#CCA857'],
-#                                          [1.0, '#8B424B']],
-#                              cmin=-1.0,
-#                              cmax=1.0)
-#                          ), row=1, col=1)
-#     fig.add_trace(px.Bar(x=['Change in total farmland calorific production'],
-#                          y=[z[1]], marker=dict(
-#                              color=[z[1]],
-#                              colorscale=[[0, '#8B424B'],
-#                                          [0.5, '#CCA857'],
-#                                          [1.0, '#7DB567']],
-#                              cmin=0.0,
-#                              cmax=1.0),
-#                          ), row=1, col=2)
-
-
-
-#     fig.add_trace(px.Bar(x=['Geometric bird species population change'],
-#                          y=[z[2]], marker=dict(
-#                              color=[z[2]],
-#                              colorscale=[[0.0, '#8B424B'],
-#                                          [0.5, '#CCA857'],
-#                                          [1.0, '#7DB567']],
-#                              cmin=0.95,
-#                              cmax=1.1),
-#                          ), row=1, col=3)
-#     fig.update_layout(yaxis1 = dict(range=[-4, 1.5]))
-#     fig.update_layout(yaxis2 = dict(range=[-3, 1.5]))
-#     fig.update_layout(yaxis3 = dict(range=[0.9, 1.2]))
-
-#     # return lst, fig
-#     return fig
-
 
 def loadukmap_plotly(area_dict, grassland_value=0, organic_value=0,
                      peatland_lo_value=0, peatland_up_value=0,
@@ -435,7 +383,6 @@ def loadukmap_plotly(area_dict, grassland_value=0, organic_value=0,
     colours = random.sample(colours, len(colours))
     
     # Add each hexagon as a separate polygon
-    fill_count = 0
     for idx, (_, row) in enumerate(geoData.iterrows()):
         # Determine color based on fill status
         color = colours[idx]
