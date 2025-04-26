@@ -64,8 +64,16 @@ class Constraint:
     return f"{self.left} <= {self.right}"
 
   def __or__(self, other):
-      # This handles overconstraining coefficients
-      return (self, other)
+    """
+    Return a constraint pair, used for handling overconstrained
+    constraints for optimising model
+    """
+    # Validate the variables are the same, i.e., same kind of shape:
+    if (self.left.getVars() == other.left.getVars()):
+      return ConstraintPair(self, other)
+    else:
+      # Raise an exception if the variables are not the same
+      raise(ValueError(f"Cannot describe an over-constrained constraint with different variables: {self.left.getVars()} and {other.left.getVars()}"))
 
   def toLatex(self):
     """
@@ -75,7 +83,7 @@ class Constraint:
 
 class ConstraintPair:
    """Represents a pair of a constraint and an alterante version which
-   should have the same syntactic shapre but different coeffecients for
+   should have the same syntactic shape but different coeffecients for
    the purpose of overconstraining
    """
    def __init__(self, normal : Constraint, over_constraint : Constraint):
