@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - app_network
+
+  landtool-app:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: landscape-gen
+    restart: unless-stopped
+    ports:
+      - "8051:8051"
+    networks:
+      - app_network
+
+networks:
+  app_network:
+
+volumes:
+  caddy_data:
+  caddy_config:
+  
