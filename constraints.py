@@ -3,20 +3,20 @@ from ConstraintSyntaxTrees import *
 # Representation of the MiniLUSP Optimisation constraints
 constraints, optimising_constraints = split_constraints([
     "Lowland Peat Overlap Constraints"
-  , (0.02781 * var("P_lo") + var("G")) <= 1
-  , (0.02701 * var("P_lo") + var("O")) <= 1
+  , (0.02781 * var("P_lo") + var("G") <= 1)
+  , (0.02701 * var("P_lo") + var("O") <= 1)
 
   , "Silvoarable Overlap Constraints"
-  , (0.3799 * var("S_A") + var("G")) <= 1
-  , (0.3690 * var("S_A") + var("O")) <= 1
-  , (0.4815 * var("S_A") + var("WL")) <= 1
+  , (0.3799 * var("S_A") + var("G") <= 1)
+  , (0.3690 * var("S_A") + var("O") <= 1)
+  , (0.4815 * var("S_A") + var("WL") <= 1)
 
 
   , "Silvopastoral Overlap Constraints"
-  , 0.3667 * var("S_P") + var("G") <= 1
-  , 0.4648 * var("S_P") + var("WL") <= 1
-  , 0.3561 * var("S_P") + var("O") <= 1
-  , 0.7934 * var("S_P") + var("WP") <= 1
+  , (0.3667 * var("S_P") + var("G") <= 1)
+  , (0.4648 * var("S_P") + var("WL") <= 1)
+  , (0.3561 * var("S_P") + var("O") <= 1)
+  , (0.7934 * var("S_P") + var("WP") <= 1)
 
 
   , "Woodland Overlap Constraints"
