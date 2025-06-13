@@ -16,6 +16,8 @@ satisfying the constraint.
 """
 from typing import Dict, Callable
 
+
+
 class Constraint:
   """
   Represention of a linear constraint with an expression on the left
@@ -32,6 +34,16 @@ class Constraint:
     Evaluate the constraint on a set of data
     """
     return (self.left.eval(model) <= self.right)
+
+  def evaluate_homogeneous_constraint(self, model : Dict[str, float]) -> float:
+     """
+     Given a model, evaluate the constraint in exact homogenous form,
+     i.e., for `lhs <= rhs` then `lhs - rhs = 0` is the exact homogenous form;
+     evaluate the left-hand side of this, i.e., `lhs - rhs` on a model.
+     """
+     lhs = self.left.eval(model)
+     rhs = self.right
+     return (lhs - rhs)
 
   def balance(self, model : Dict[str, float]) -> Dict[str, float]:
     """
@@ -51,11 +63,32 @@ class Constraint:
     """
     return f"{self.left} <= {self.right}"
 
+  def __or__(self, other):
+    """
+    Return a constraint pair, used for handling overconstrained
+    constraints for optimising model
+    """
+    # Validate the variables are the same, i.e., same kind of shape:
+    if (self.left.getVars() == other.left.getVars()):
+      return ConstraintPair(self, other)
+    else:
+      # Raise an exception if the variables are not the same
+      raise(ValueError(f"Cannot describe an over-constrained constraint with different variables: {self.left.getVars()} and {other.left.getVars()}"))
+
   def toLatex(self):
     """
     Return a LaTeX representation of the constraint
     """
     return f"{self.left.toLatex()} \\leq {self.right}"
+
+class ConstraintPair:
+   """Represents a pair of a constraint and an alterante version which
+   should have the same syntactic shape but different coeffecients for
+   the purpose of overconstraining
+   """
+   def __init__(self, normal : Constraint, over_constraint : Constraint):
+      self.normal = normal
+      self.over_constraint = over_constraint
 
 class Expr:
     def __init__(self, value, op=None, right=None):
@@ -67,7 +100,6 @@ class Expr:
       """
       Evaluate the expression using the given model
       """
-
       # No operation so either a variable or float
       if self.op is None:
           # If a float constant, just return that otherwise look up in the model
@@ -147,6 +179,17 @@ def var(name : str) -> Expr:
 def print_constraints(constraints : list[Constraint]):
     for constraint in constraints:
         print(constraint)
+
+def split_constraints(constraints : list[Constraint | ConstraintPair]) -> tuple[list[Constraint], list[Constraint]]:
+  left = []
+  right = []
+  for c in constraints:
+    if isinstance(c, ConstraintPair):
+      left.append(c.normal)
+      right.append(c.over_constraint)
+    elif isinstance(c, Constraint):
+      left.append(c)
+  return (left, right)
 
 # Generate a LaTeX representation of the constraints in specification.tex
 def generateLatexSpecification(constraints : list[Constraint]):
