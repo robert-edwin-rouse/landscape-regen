@@ -14,7 +14,7 @@ The Constraint class has methods for checking if the constraint is satisfied by
 a model, and for balancing a model using the constraint, to get a new model
 satisfying the constraint.
 """
-from typing import Dict, Callable
+from typing import Dict, Union, Callable
 
 
 
@@ -180,7 +180,7 @@ def print_constraints(constraints : list[Constraint]):
     for constraint in constraints:
         print(constraint)
 
-def split_constraints(constraints : list[Constraint | ConstraintPair]) -> tuple[list[Constraint], list[Constraint]]:
+def split_constraints(constraints : list[Union[Constraint, ConstraintPair]]) -> tuple[list[Constraint], list[Constraint]]:
   left = []
   right = []
   for c in constraints:
